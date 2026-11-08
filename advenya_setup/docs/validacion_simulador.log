@@ -1,0 +1,115 @@
+== Escenario: primer arranque (animacion + bienvenida)
+  [mem] inicio de la interfaz: 82988 B en uso
+  [PASS] la animacion de arranque esta activa al inicio
+  [render host] animacion de arranque: 78 fotogramas, media 498 us, max 1616 us
+  [PASS] el logotipo se retira tras ~3,3 s
+  [PASS] pantalla inicial: bienvenida
+  [PASS] texto '¡Bienvenido!' (idioma por defecto)
+  [PASS] etapa 'bienvenida' persistida
+  resultado: 5 correctas, 0 fallidas
+  (codigo de salida 0)
+
+== Escenario: navegacion, idiomas, privacidad y personalizacion
+  [mem] inicio de la interfaz: 82988 B en uso
+  [PASS] arranca en bienvenida
+  [PASS] transicion en curso tras 'Comenzar'
+  [render host] transicion bienvenida -> idioma: 88 fotogramas, media 600 us, max 1737 us
+  duracion medida de la transicion: ~510 ms (desde el toque)
+  [PASS] un unico avance a idioma (doble toque ignorado)
+  [PASS] etapa idioma registrada
+  [PASS] idioma en aplicado al instante (titulo 'Select a language')
+  [PASS]   ... tambien en la pantalla oculta de bienvenida
+  [PASS] idioma pt-BR aplicado al instante (titulo 'Selecione um idioma')
+  [PASS]   ... tambien en la pantalla oculta de bienvenida
+  [PASS] idioma fr aplicado al instante (titulo 'Choisissez une langue')
+  [PASS]   ... tambien en la pantalla oculta de bienvenida
+  [PASS] idioma de aplicado al instante (titulo 'Sprache auswählen')
+  [PASS]   ... tambien en la pantalla oculta de bienvenida
+  [PASS] idioma es aplicado al instante (titulo 'Selecciona un idioma')
+  [PASS]   ... tambien en la pantalla oculta de bienvenida
+  [PASS] cambio de idioma NO escrito de inmediato (escritura diferida)
+  [PASS] idioma escrito una sola vez tras 1500 ms sin cambios
+  [PASS] gesto a la derecha: vuelve a bienvenida
+  [PASS] al volver se conserva el idioma elegido
+  [PASS] avanza a privacidad
+  [PASS] sin marcar la casilla no se puede continuar
+  [PASS] el apartado 'Privacidad' abre su documento
+  [PASS] el documento se cierra
+  [PASS] el gesto de retroceso cierra el documento sin salir de privacidad
+  [PASS] 'Mas tarde' vuelve a bienvenida sin registrar la aceptacion
+  [PASS] aceptacion explicita registrada y avance a personalizacion
+  [PASS] tema oscuro aplicado al instante
+  [PASS] automatico sin hora conocida se resuelve a claro
+  [PASS] acento 1 aplicado (#855FEE)
+  [PASS] acento 2 aplicado (#D158BB)
+  [PASS] acento 3 aplicado (#E5363D)
+  [PASS] acento 4 aplicado (#FD9440)
+  [PASS] acento 5 aplicado (#FDCD43)
+  [PASS] acento 6 aplicado (#72C456)
+  [PASS] acento 7 aplicado (#31B8B7)
+  [PASS] fondo 2 seleccionado
+  [PASS] fondo 3 seleccionado
+  [PASS] fondo 4 seleccionado
+  [PASS] fondo 5 seleccionado
+  [PASS] fondo 1 seleccionado
+  [render host] cambios de fondo (incluye horneado sincrono en el host): 439 fotogramas, media 1162 us, max 3548 us
+  [PASS] retroceso a privacidad: la casilla sigue marcada (aceptado)
+  [PASS] al volver a personalizacion se conservan tema, color y fondo
+  [PASS] elecciones persistidas (escritura diferida)
+  escrituras de estado en todo el escenario: 12
+  resultado: 42 correctas, 0 fallidas
+  (codigo de salida 0)
+
+== Escenario: recuperacion tras corte de alimentacion
+  [mem] inicio de la interfaz: 82988 B en uso
+  [PASS] continua en personalizacion (etapa guardada)
+  [PASS] elecciones recuperadas: fondo 4, oscuro, verde, privacidad aceptada
+  [mem] pantallas del asistente destruidas: 2389258 B en uso
+  [mem] entrega al nucleo: 2389210 B en uso
+  [nucleo simulado] entrega recibida: motivo=0 idioma=es oscuro=1 acento=#72C456 fondo=3
+  [PASS] entrega al nucleo (setup completado)
+  [PASS] la entrega incluye idioma, tema, acento y fondo
+  [PASS] pantallas del asistente destruidas tras la entrega
+  [PASS] setup marcado como completo
+  [mem] tras liberar la interfaz del asistente: 84658 B en uso
+  heap: antes de terminar 2406033 B, tras destruir pantallas 2389066 B, tras release_setup_ui 84658 B
+  [PASS] release_setup_ui libera el fondo (~2,3 MB)
+  resultado: 7 correctas, 0 fallidas
+  (codigo de salida 0)
+
+== Escenario: arranque con el setup ya completado
+  [mem] inicio de la interfaz: 82988 B en uso
+  [mem] entrega al nucleo: 285899 B en uso
+  [nucleo simulado] entrega recibida: motivo=1 idioma=es oscuro=1 acento=#72C456 fondo=3
+  [PASS] entrega directa al nucleo
+  [PASS] el logotipo queda fijo hasta que el nucleo lo retira
+  [PASS] no se crea ninguna pantalla del asistente
+  [PASS] release_setup_ui funde y retira el logotipo
+  resultado: 4 correctas, 0 fallidas
+  (codigo de salida 0)
+
+== Escenario: corte durante la seleccion de idioma
+  [mem] inicio de la interfaz: 82988 B en uso
+  resultado: 0 correctas, 0 fallidas
+  (codigo de salida 0)
+
+  [mem] inicio de la interfaz: 82988 B en uso
+  [PASS] tras el corte continua en idioma con el aleman ya aplicado
+  resultado: 1 correctas, 0 fallidas
+  (codigo de salida 0)
+
+== Escenario: estabilidad de memoria (ciclos repetidos)
+  [mem] inicio de la interfaz: 82988 B en uso
+  heap tras calentamiento 2425009 B, tras 30 ciclos completos 2425018 B (diferencia 9 B)
+  [PASS] sin crecimiento de memoria tras 30 ciclos (|diferencia| < 4 KB)
+  [PASS] escrituras de estado acotadas: 188 en 30 ciclos
+  resultado: 2 correctas, 0 fallidas
+  (codigo de salida 0)
+
+== Escenario: matriz de capturas (5 idiomas x 4 pantallas, claro y oscuro)
+  [mem] inicio de la interfaz: 82988 B en uso
+  [PASS] matriz generada
+  resultado: 1 correctas, 0 fallidas
+  (codigo de salida 0)
+
+TOTAL: 62 verificaciones correctas, 0 fallidas
