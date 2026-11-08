@@ -14,6 +14,12 @@ extern "C" {
  */
 esp_err_t adv_settings_nvs_init(const adv_settings_backend_t **out_backend);
 
+/**
+ * Funciones que rodean cada escritura de NVS (p. ej. la guardia de flash del
+ * port de LVGL). Opcional; registrar antes del primer guardado.
+ */
+void adv_settings_nvs_set_write_guard(void (*begin)(void), void (*end)(void));
+
 /** Bloquea hasta que la ultima escritura pedida este en flash (o timeout). */
 bool adv_settings_nvs_flush(uint32_t timeout_ms);
 

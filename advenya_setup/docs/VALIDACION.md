@@ -21,7 +21,7 @@ avisos en código propio: 0 (3 avisos de LVGL upstream por atributos IRAM)
 
 Configuración efectiva comprobada en `sdkconfig`: `ESP32P4_SELECTS_REV_LESS_V3=y`,
 CPU 360 MHz, `SPIRAM=y` 200 MHz HEX, `LCD_DSI_ISR_CACHE_SAFE=y`,
-`DMA2D_ISR_IRAM_SAFE=y`, `LV_COLOR_DEPTH=16`, `LV_DEF_REFR_PERIOD=33`,
+`DMA2D_ISR_IRAM_SAFE` desactivado (ver ARQUITECTURA.md), `LV_COLOR_DEPTH=16`, `LV_DEF_REFR_PERIOD=33`,
 `FREERTOS_HZ=1000`.
 
 Comprobación de hardware contra la referencia (`tools/check_hw_vs_flex.py`):

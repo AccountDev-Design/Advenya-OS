@@ -62,7 +62,7 @@ revisión exacta del chip (deducida < 3.0), capacidad de la PSRAM.
 - I²C con el driver nuevo `i2c_master`, plazos de 8 ms y recuperación del bus
   reimplementada con GPIO en drenador abierto.
 - LEDC del IDF en lugar de `ledcAttach`.
-- `CONFIG_LCD_DSI_ISR_CACHE_SAFE` + `CONFIG_DMA2D_ISR_IRAM_SAFE` (el panel no
+- `CONFIG_LCD_DSI_ISR_CACHE_SAFE` (el panel no
   destella al escribir NVS) y callback en IRAM con contexto en RAM interna.
 - LVGL con port propio: 2 buffers parciales en RAM interna alineados a 64 B,
   copia por DMA2D, espera con semáforo y plazo (sin bucles de espera activa).

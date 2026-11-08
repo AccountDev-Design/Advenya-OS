@@ -61,6 +61,32 @@ el bus compartido). Ninguna animación usa esperas bloqueantes: todo son
 Refresco de LVGL: 33 ms (objetivo 30 FPS estables). El panel no se apaga
 durante escrituras de NVS gracias a `CONFIG_LCD_DSI_ISR_CACHE_SAFE`.
 
+### DMA2D y escrituras de flash (corrección tras la prueba en placa)
+
+En la placa, con `CONFIG_DMA2D_ISR_IRAM_SAFE=y`, cada flush fallaba:
+`dma2d_enqueue: on_job_picked not in IRAM` → `esp_async_fbcpy: DMA2D enqueue
+failed` → `lcd.dsi: async memcpy failed`. Causa: en ESP-IDF 5.5.5, con esa
+opción `dma2d_enqueue()` exige que `on_job_picked` esté en IRAM, pero el que
+usa `esp_lcd` (`dma2d_job_picked_cb`, en `esp_async_fbcpy.c`) se enlaza en
+flash (`0x40012ce0` en el mapa, fuera de la IRAM) y no hay opción de
+configuración que lo mueva. Las dos piezas de IDF no son compatibles.
+
+Corrección:
+
+1. La opción se desactiva (`sdkconfig.defaults`) y `advenya_lvgl_port.c`
+   aborta la compilación con un `#error` explicativo si un `sdkconfig` antiguo
+   la conserva.
+2. Sin ISR de DMA2D cache-safe, un borrado de flash retrasaría el aviso de
+   fin de copia y LVGL podría reutilizar un buffer que la DMA2D aún lee. Por
+   eso cada escritura de NVS va entre `adv_lvgl_flash_guard_begin/end`: toma
+   el bloqueo de LVGL y espera a que termine la copia en curso antes de tocar
+   la flash. El código de LVGL (en flash) se pararía igualmente durante el
+   borrado, así que no se pierde rendimiento; el panel sigue refrescando.
+3. El port lleva la cuenta explícita de la copia en curso (`s_inflight`): si
+   una espera vence, la siguiente banda vuelve a esperar en lugar de llamar a
+   `draw_bitmap` con la DMA2D ocupada (que devolvería `ESP_ERR_INVALID_STATE`),
+   y los errores de `draw_bitmap` se registran en el log.
+
 ## Memoria
 
 | Uso | Dónde | Tamaño |

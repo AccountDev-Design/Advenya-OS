@@ -34,6 +34,13 @@ lv_indev_t *adv_lvgl_indev(void);
  */
 void adv_lvgl_on_first_frame(void (*cb)(void *), void *arg);
 
+/**
+ * Guardia para operaciones de flash (NVS) desde otras tareas: bloquea LVGL y
+ * espera a que termine la copia DMA2D en curso. Siempre en pareja.
+ */
+void adv_lvgl_flash_guard_begin(void);
+void adv_lvgl_flash_guard_end(void);
+
 /* ---- diagnostico ---- */
 typedef struct {
     float    fps;              /* refrescos completados por segundo           */

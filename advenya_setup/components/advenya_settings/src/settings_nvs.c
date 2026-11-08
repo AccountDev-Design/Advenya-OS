@@ -25,6 +25,14 @@ static const char *TAG = "adv_settings";
 
 static QueueHandle_t s_q;            /* longitud 1: siempre la ultima peticion */
 static SemaphoreHandle_t s_idle;     /* dado cuando no hay escritura pendiente */
+static void (*s_guard_begin)(void);
+static void (*s_guard_end)(void);
+
+void adv_settings_nvs_set_write_guard(void (*begin)(void), void (*end)(void))
+{
+    s_guard_begin = begin;
+    s_guard_end = end;
+}
 
 static bool be_load(adv_settings_t *out)
 {
@@ -67,6 +75,9 @@ static void writer_task(void *arg)
             continue;
         }
         nvs_handle_t h;
+        if (s_guard_begin) {
+            s_guard_begin();
+        }
         esp_err_t err = nvs_open(NVS_NS, NVS_READWRITE, &h);
         if (err == ESP_OK) {
             err = nvs_set_blob(h, NVS_KEY, &s, sizeof(s));
@@ -74,6 +85,9 @@ static void writer_task(void *arg)
                 err = nvs_commit(h);
             }
             nvs_close(h);
+        }
+        if (s_guard_end) {
+            s_guard_end();
         }
         if (err != ESP_OK) {
             ESP_LOGE(TAG, "no se pudo guardar el estado: %s", esp_err_to_name(err));

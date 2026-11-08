@@ -24,6 +24,13 @@
 #include "advenya_lvgl_port.h"
 #include "advenya_lvgl_port_priv.h"
 
+/* El panel copia los buffers de LVGL con esp_async_fbcpy (DMA2D). En ESP-IDF
+ * 5.5.5 su callback on_job_picked esta en flash, y con DMA2D_ISR_IRAM_SAFE
+ * dma2d_enqueue() lo rechaza: ninguna copia llegaria al panel. */
+#if CONFIG_DMA2D_ISR_IRAM_SAFE
+#error "CONFIG_DMA2D_ISR_IRAM_SAFE es incompatible con la copia DMA2D de esp_lcd (esp_async_fbcpy) en ESP-IDF 5.5.5. Borra 'sdkconfig' y vuelve a ejecutar 'idf.py set-target esp32p4' (o desactivala en menuconfig: Component config > Hardware Settings > 2D-DMA)."
+#endif
+
 static const char *TAG = "adv_lvgl";
 
 #define TOUCH_STALE_US   (150 * 1000)   /* sin frames del GT911 -> se da por soltado */
@@ -52,28 +59,81 @@ static bool IRAM_ATTR on_trans_done(esp_lcd_panel_handle_t panel, esp_lcd_dpi_pa
     return hp == pdTRUE;
 }
 
+/*
+ * Estado de la copia DMA2D en curso. Solo se toca con el bloqueo de LVGL
+ * tomado (flush_cb / flush_wait_cb corren en la tarea de LVGL;
+ * adv_lvgl_flash_guard_begin() toma el bloqueo); la ISR solo da el semaforo.
+ * Asi el unico token del semaforo binario siempre lo consume quien sabe que
+ * hay una copia pendiente, aunque una espera haya vencido.
+ */
+static bool s_inflight;
+
+/* Espera el fin de la copia pendiente (si la hay). true si termino. */
+static bool wait_inflight(uint32_t timeout_ms)
+{
+    if (!s_inflight) {
+        return true;
+    }
+    int64_t t0 = esp_timer_get_time();
+    bool done = xSemaphoreTake(s_flush_sem, pdMS_TO_TICKS(timeout_ms)) == pdTRUE;
+    uint32_t dt = (uint32_t)(esp_timer_get_time() - t0);
+    if (dt > g_adv_port_stats.flush_wait_max_us) {
+        g_adv_port_stats.flush_wait_max_us = dt;
+    }
+    if (done) {
+        s_inflight = false;
+    }
+    return done;
+}
+
 static void flush_cb(lv_display_t *disp, const lv_area_t *area, uint8_t *px)
 {
-    /* Un token viejo (tras un plazo vencido) haria que la espera terminase
-     * antes que la DMA en curso: se drena justo antes de cada transferencia. */
-    (void)xSemaphoreTake(s_flush_sem, 0);
-    esp_err_t err = esp_lcd_panel_draw_bitmap(s_hw->panel, area->x1, area->y1, area->x2 + 1, area->y2 + 1, px);
-    if (err != ESP_OK) {
+    /* Si una espera anterior vencio, la DMA2D sigue ocupada: esp_lcd
+     * rechazaria la nueva copia (ESP_ERR_INVALID_STATE). Se espera de nuevo
+     * en lugar de perder la banda. */
+    if (!wait_inflight(CONFIG_ADV_LVGL_FLUSH_TIMEOUT_MS)) {
+        g_adv_port_stats.flush_timeouts++;
         g_adv_port_stats.flush_errors++;
-        xSemaphoreGive(s_flush_sem);           /* no bloquear la espera siguiente */
+        return;                                   /* banda descartada, sin bloqueo */
+    }
+    esp_err_t err = esp_lcd_panel_draw_bitmap(s_hw->panel, area->x1, area->y1, area->x2 + 1, area->y2 + 1, px);
+    if (err == ESP_OK) {
+        s_inflight = true;
+    } else {
+        g_adv_port_stats.flush_errors++;
+        ESP_LOGE(TAG, "draw_bitmap (%d,%d)-(%d,%d): %s", (int)area->x1, (int)area->y1, (int)area->x2,
+                 (int)area->y2, esp_err_to_name(err));
     }
 }
 
 static void flush_wait_cb(lv_display_t *disp)
 {
-    int64_t t0 = esp_timer_get_time();
-    if (xSemaphoreTake(s_flush_sem, pdMS_TO_TICKS(CONFIG_ADV_LVGL_FLUSH_TIMEOUT_MS)) != pdTRUE) {
+    if (!wait_inflight(CONFIG_ADV_LVGL_FLUSH_TIMEOUT_MS)) {
         g_adv_port_stats.flush_timeouts++;
     }
-    uint32_t dt = (uint32_t)(esp_timer_get_time() - t0);
-    if (dt > g_adv_port_stats.flush_wait_max_us) {
-        g_adv_port_stats.flush_wait_max_us = dt;
+}
+
+/*
+ * Guardia de flash. Mientras se borra o escribe la flash la cache esta
+ * apagada; la ISR de la DMA2D de esp_lcd NO es cache-safe en IDF 5.5.5 (ver
+ * sdkconfig.defaults), asi que su "fin de copia" se retrasaria todo el borrado
+ * y LVGL podria reutilizar un buffer que la DMA2D aun lee. Antes de tocar la
+ * flash se toma el bloqueo de LVGL (no empieza ningun render ni flush) y se
+ * espera a que termine la copia en curso. Durante el borrado el codigo de
+ * LVGL (en flash) quedaria parado igualmente, asi que no se pierde nada. El
+ * refresco del panel continua: la ISR del puente DSI si es cache-safe.
+ */
+void adv_lvgl_flash_guard_begin(void)
+{
+    adv_lvgl_lock(0);
+    if (!wait_inflight(CONFIG_ADV_LVGL_FLUSH_TIMEOUT_MS)) {
+        g_adv_port_stats.flush_timeouts++;
     }
+}
+
+void adv_lvgl_flash_guard_end(void)
+{
+    adv_lvgl_unlock();
 }
 
 static void refr_event_cb(lv_event_t *e)

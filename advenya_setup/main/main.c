@@ -84,6 +84,8 @@ void app_main(void)
     /* 3) LVGL */
     adv_lvgl_on_first_frame(backlight_on, NULL);
     ESP_ERROR_CHECK(adv_lvgl_port_init(&s_display));
+    /* Las escrituras de NVS no se solapan con una copia DMA2D en curso. */
+    adv_settings_nvs_set_write_guard(adv_lvgl_flash_guard_begin, adv_lvgl_flash_guard_end);
 
     /* 4) interfaz */
     adv_lvgl_lock(0);

@@ -64,7 +64,7 @@ OTA, red, LittleFS, suspensión/apagado, teclado multitáctil
 | `Wire` con plazo de 8 ms | `i2c_master_bus`/`i2c_master_dev`, plazo de 8 ms por transacción |
 | recuperación con `pinMode`/`digitalWrite` | GPIO en drenador abierto, 9 pulsos de SCL, STOP manual, se vuelve a crear el bus |
 | framebuffer propio + `flxFlush()` | LVGL en modo parcial (2 buffers en RAM interna) + `draw_bitmap` por DMA2D + `flush_wait_cb` con semáforo y plazo de 120 ms |
-| `CONFIG_LCD_DSI_ISR_IRAM_SAFE` (nombre en 5.4) | `CONFIG_LCD_DSI_ISR_CACHE_SAFE` + `CONFIG_DMA2D_ISR_IRAM_SAFE` |
+| `CONFIG_LCD_DSI_ISR_IRAM_SAFE` (nombre en 5.4) | `CONFIG_LCD_DSI_ISR_CACHE_SAFE`; las copias DMA2D se serializan con las escrituras de NVS (`DMA2D_ISR_IRAM_SAFE` es incompatible con `esp_lcd` en 5.5.5, ver ARQUITECTURA.md) |
 | fallos con `Serial.println` | `esp_err_t`, `ESP_GOTO_ON_ERROR` y liberación en orden inverso (`adv_board_display_deinit`) |
 
 ### Revisión del chip (decisión documentada)
