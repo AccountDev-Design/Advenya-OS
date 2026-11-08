@@ -1,0 +1,39 @@
+menu "ADVENYA · Port de LVGL"
+
+    config ADV_LVGL_TASK_CORE
+        int "Nucleo de la tarea de LVGL"
+        range 0 1
+        default 1
+
+    config ADV_LVGL_TASK_PRIORITY
+        int "Prioridad de la tarea de LVGL"
+        default 4
+
+    config ADV_LVGL_TASK_STACK
+        int "Pila de la tarea de LVGL (bytes)"
+        default 12288
+
+    config ADV_LVGL_BUF_LINES
+        int "Lineas de cada buffer de dibujo (2 buffers en RAM interna)"
+        range 20 200
+        default 80
+        help
+            480 x 80 x 2 B = 75 KB por buffer. Con PSRAM disponible y poca RAM
+            interna se puede bajar; mas lineas = menos llamadas de flush.
+
+    config ADV_LVGL_FLUSH_TIMEOUT_MS
+        int "Espera maxima del fin de copia DMA2D (ms)"
+        default 120
+        help
+            Igual que Flex OS Ultra: 120 ms (mas de siete periodos a 60 Hz).
+
+    config ADV_DIAG_ENABLE
+        bool "Diagnostico periodico (FPS, tiempos de render, memoria)"
+        default y
+
+    config ADV_DIAG_PERIOD_MS
+        int "Periodo del informe de diagnostico (ms)"
+        depends on ADV_DIAG_ENABLE
+        default 5000
+
+endmenu
