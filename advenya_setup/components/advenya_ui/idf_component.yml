@@ -1,0 +1,8 @@
+## LVGL fijado a la etiqueta v9.2.2 (commit 7f07a129e8d77f4984fff8e623fd5be18ff42e74).
+## Se usa la fuente git oficial para que la compilacion no dependa del
+## registro de componentes; ver docs/DEPENDENCIAS.md para la alternativa
+## equivalente desde components.espressif.com (lvgl/lvgl: "==9.2.2").
+dependencies:
+  lvgl/lvgl:
+    git: https://github.com/lvgl/lvgl.git
+    version: 7f07a129e8d77f4984fff8e623fd5be18ff42e74

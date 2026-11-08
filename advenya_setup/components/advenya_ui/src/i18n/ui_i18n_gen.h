@@ -1,0 +1,49 @@
+/* ARCHIVO GENERADO por tools/gen_i18n.py desde translations/ - NO EDITAR. */
+#pragma once
+
+typedef enum {
+    ADV_LANG_ES,
+    ADV_LANG_EN,
+    ADV_LANG_PT_BR,
+    ADV_LANG_FR,
+    ADV_LANG_DE,
+    ADV_LANG_COUNT
+} adv_lang_t;
+
+typedef enum {
+    TXT_WELCOME_TITLE,
+    TXT_BTN_START,
+    TXT_LANG_TITLE,
+    TXT_BTN_CONTINUE,
+    TXT_PRIVACY_TITLE,
+    TXT_PRIVACY_SUBTITLE,
+    TXT_PRIVACY_ITEM_TITLE,
+    TXT_PRIVACY_ITEM_DESC,
+    TXT_PERMS_ITEM_TITLE,
+    TXT_PERMS_ITEM_DESC,
+    TXT_TERMS_ITEM_TITLE,
+    TXT_TERMS_ITEM_DESC,
+    TXT_ACCEPT_PREFIX,
+    TXT_ACCEPT_LINK_PRIVACY,
+    TXT_ACCEPT_MID,
+    TXT_ACCEPT_LINK_TERMS,
+    TXT_ACCEPT_SUFFIX,
+    TXT_BTN_ACCEPT_CONTINUE,
+    TXT_BTN_LATER,
+    TXT_PERSO_TITLE,
+    TXT_PERSO_SUBTITLE,
+    TXT_SEC_APPEARANCE,
+    TXT_THEME_LIGHT,
+    TXT_THEME_DARK,
+    TXT_THEME_AUTO,
+    TXT_SEC_ACCENT,
+    TXT_SEC_WALLPAPER,
+    TXT_LEGAL_PENDING_BODY,
+    TXT_LEGAL_STATUS_PENDING,
+    TXT_BTN_CLOSE,
+    TXT_COUNT
+} adv_txt_t;
+
+extern const char *const adv_i18n_table[ADV_LANG_COUNT][TXT_COUNT];
+extern const char *const adv_i18n_lang_code[ADV_LANG_COUNT];
+extern const char *const adv_i18n_lang_native[ADV_LANG_COUNT];
