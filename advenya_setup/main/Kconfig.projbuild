@@ -1,0 +1,10 @@
+menu "ADVENYA · Asistente de configuracion"
+
+    config ADV_SETUP_RESET_ON_BOOT
+        bool "Borrar el estado del asistente en cada arranque (desarrollo)"
+        default n
+        help
+            Borra el blob de NVS antes de cargarlo: el asistente empieza
+            siempre desde la bienvenida. Solo para pruebas.
+
+endmenu

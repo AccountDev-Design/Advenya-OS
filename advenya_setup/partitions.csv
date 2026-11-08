@@ -1,0 +1,6 @@
+# ADVENYA setup · tabla de particiones (flash de 16 MB, verificada en Flex OS Ultra)
+# El firmware ocupa ~4 MB (fuentes y fondos embebidos): factory de 6 MB deja margen.
+# Name,   Type, SubType, Offset,   Size,     Flags
+nvs,      data, nvs,     0x9000,   0x6000,
+phy_init, data, phy,     0xF000,   0x1000,
+factory,  app,  factory, 0x10000,  0x600000,

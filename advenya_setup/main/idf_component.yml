@@ -1,0 +1,6 @@
+## Version exacta de ESP-IDF y dependencias fijadas (ver docs/DEPENDENCIAS.md).
+dependencies:
+  idf: "==5.5.5"
+  lvgl/lvgl:
+    git: https://github.com/lvgl/lvgl.git
+    version: 7f07a129e8d77f4984fff8e623fd5be18ff42e74   # v9.2.2
