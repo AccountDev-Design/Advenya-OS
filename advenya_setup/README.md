@@ -67,7 +67,9 @@ Diagnóstico en el monitor cada 5 s:
 python3 sim/run_tests.py          # compila sim/ y ejecuta todos los escenarios
 ```
 
-Genera capturas en `sim/out/` y hojas en `docs/capturas/`. Ver
+Usa el Python del sistema con numpy y Pillow (no el entorno virtual de
+ESP-IDF, que no trae Pillow). Genera capturas en `sim/out/` y hojas en
+`docs/capturas/`. Ver
 `docs/VALIDACION.md` para qué cubre y qué no.
 
 ## Regenerar recursos
