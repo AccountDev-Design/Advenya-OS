@@ -1,0 +1,48 @@
+{
+  "order": [
+    "es",
+    "en",
+    "pt-BR",
+    "fr",
+    "de"
+  ],
+  "native_names": {
+    "es": "Español",
+    "en": "English",
+    "pt-BR": "Português (Brasil)",
+    "fr": "Français",
+    "de": "Deutsch"
+  },
+  "keys": [
+    "welcome_title",
+    "btn_start",
+    "lang_title",
+    "btn_continue",
+    "privacy_title",
+    "privacy_subtitle",
+    "privacy_item_title",
+    "privacy_item_desc",
+    "perms_item_title",
+    "perms_item_desc",
+    "terms_item_title",
+    "terms_item_desc",
+    "accept_prefix",
+    "accept_link_privacy",
+    "accept_mid",
+    "accept_link_terms",
+    "accept_suffix",
+    "btn_accept_continue",
+    "btn_later",
+    "perso_title",
+    "perso_subtitle",
+    "sec_appearance",
+    "theme_light",
+    "theme_dark",
+    "theme_auto",
+    "sec_accent",
+    "sec_wallpaper",
+    "legal_pending_body",
+    "legal_status_pending",
+    "btn_close"
+  ]
+}
