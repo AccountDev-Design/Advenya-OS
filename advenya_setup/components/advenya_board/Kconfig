@@ -1,0 +1,24 @@
+menu "ADVENYA · Placa GUITION JC4880P443C_I_W"
+
+    config ADV_BOARD_BACKLIGHT_DEFAULT
+        int "Brillo inicial de la retroiluminacion (%)"
+        range 5 100
+        default 80
+        help
+            Mismo valor por defecto que Flex OS Ultra (gBright = 80).
+
+    config ADV_BOARD_TOUCH_SWAP_XY
+        bool "GT911: intercambiar ejes X/Y"
+        default n
+        help
+            Equivalente a GT911_SWAP_XY de Flex OS Ultra (0 en la placa de referencia).
+
+    config ADV_BOARD_TOUCH_FLIP_X
+        bool "GT911: espejo en X"
+        default n
+
+    config ADV_BOARD_TOUCH_FLIP_Y
+        bool "GT911: espejo en Y"
+        default n
+
+endmenu
